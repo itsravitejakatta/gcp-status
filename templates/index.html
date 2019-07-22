@@ -1,0 +1,25 @@
+{% include "base.html" %}
+<div>
+<div class="text">
+<p><strong>Region : {{region}}</strong></p>
+<p><strong>Project Id : {{projectid}}</strong></p>
+</div>
+<br />
+
+<table align="center" class="table" style="width:60%">
+        <tr>
+            <td class="td">Name</td>
+            <td class="td">Zone</td>
+            <td class="td">Status</td>
+        </tr>
+{%for instance in user%}
+        <tr>
+            <td class="td">{{ instance['name'] }}</td>
+            <td class="td">{{ instance['zone'] }}</td>
+            <td class="td">{{ instance['status'] }}</td>
+      </tr>
+{% endfor %}
+    </table>
+</div>
+
+

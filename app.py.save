@@ -1,0 +1,53 @@
+from flask import Flask, request,render_template
+from flask_cors import CORS,cross_origin
+import logging, json
+from util import config
+from util import gcp 
+#import app_test
+
+
+app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+cors = CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}})
+PROJECT_ID="cloud-migration-solution"
+region="us-central1"             
+filter_zone=("name:"+region+ "*")
+'''
+#@app.route('/')
+#def version():
+#    return gcp.get_list_of_instances(PROJECT_ID,filter_zone)
+#''' 
+
+
+@app.route('/zoneslist')
+def list_of_zones(PROJECT_ID,filter_zone):
+    # return json.dumps([{"id":1,"name":"instance"}])
+    return gcp.get_list_of_zones()
+
+@app.route('/instances', methods=['POST'])
+@cross_origin(origin='localhost',headers=['Content- Type'])
+def list_of_instances(zone,projectid):
+    if request.method == 'POST':
+       region = request.form['regionname']
+       project_name = request.form["projectName"]
+       zone_filter = ("name:"+region+"*")
+       data = gcp.get_list_of_instances(projectid,zone_filter)
+       return render_template('index.html', user=data)
+
+@app.route('/', methods=['GET'])
+@cross_origin(origin='localhost',headers=['Content- Type'])
+def renderbasetemplate():
+     return render_template('base.html')
+
+@app.route('/instances/<zone>/<instance_name>/start')
+def start_instance(zone,instance_name):
+    return gcp.start_instanse(zone,instance_name)
+
+@app.route('/instances/<zone>/<instance_name>/stop')
+def stop_instance(zone,instance_name):
+    return gcp.stop_instance(zone,instance_name)
+
+# main method
+if __name__ == '__main__':
+    app.run(debug=True)
+
